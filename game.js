@@ -1,95 +1,147 @@
-// Get canvas and context
+//Get canvas, context, and score output
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
+const score = document.getElementById('score');
 
-// Get output
-const output = document.getElementById('output');
-
-// Drawing state
+//Drawing state
 let isDrawing = false;
-let currentColor = 'white';
+let brushColour = 'white';
 let brushSize = 3;
+let feedback = 1;
 
-// Data
-let distances = [];
+//Data
+let dRadii = [];
 let accuracy;
-let startDistance;
+let startRadius;
+let prevAngle;
+let totalRotation;
 
-// Get UI elements
+//Get UI elements
 const clearButton = document.getElementById('clearBtn');
 const brushSizeSlider = document.getElementById('brushSize');
 const sizeValue = document.getElementById('sizeValue');
 
-// Draw fixed object in center
+//Draw circle in center
 function drawFixedObject() {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const radius = 10;
     
-    ctx.save(); // Save current drawing state
+    ctx.save(); //Save current drawing state
     
-    // Draw circle
+    //Draw circle
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 3;
     ctx.stroke();
-    
-    // Fill circle
+
     ctx.fillStyle = 'rgba(255, 255, 255, 1)';
     ctx.fill();
     
-    ctx.restore(); // Restore drawing state
+    ctx.restore(); //Restore drawing state
 }
 
-// Set canvas to fullscreen
+//Set canvas to fill screen
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    drawFixedObject(); // Draw object after resize
+    drawFixedObject(); //Draw object after resize
 }
 
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Mouse event handlers
+//Mouse event handlers
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('mouseout', stopDrawing);
 
-// Touch support for mobile devices
-canvas.addEventListener('touchstart', handleTouchStart);
-canvas.addEventListener('touchmove', handleTouchMove);
-canvas.addEventListener('touchend', stopDrawing);
+function clearCanvas(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawFixedObject(); // Redraw fixed object
+}
+
+function getDistance(x1, y1, x2, y2){
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    return Math.sqrt(dx*dx + dy*dy);
+}
+function getAngle(x1, y1, originX, originY){
+    const x = x1 - originX;
+    const y = y1 - originY;
+    return Math.atan2(y, x);
+}
+
+function updateScore(e) {
+    const pos = getMousePos(e);
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    
+    //Check if its the end of the circle
+    const angle = getAngle(pos.x, pos.y, centerX, centerY);
+    let dAngle = angle - prevAngle;
+    if (dAngle > Math.PI) dAngle -= 2 * Math.PI;
+    if (dAngle < -Math.PI) dAngle += 2 * Math.PI;
+    totalRotation += dAngle;
+    if (Math.abs(totalRotation) > 2 * Math.PI) stopDrawing();
+    prevAngle = angle;
+
+    //Record data
+    const distanceToCenter = getDistance(pos.x, pos.y, centerX, centerY);
+    dRadii.push(distanceToCenter - startRadius);
+
+    //Update feedback
+    if (feedback == 1){ //Percentage Feedback
+        const rms = Math.sqrt((dRadii.reduce((sum, r) => sum + r*r, 0) / dRadii.length));
+        accuracy = 100*(1 - rms / startRadius);
+        score.textContent = accuracy.toFixed(2);
+    } else{ //Colour Feedback
+        const accuracy = Math.abs(dRadii[dRadii.length - 1] / startRadius) * 5;
+        const redComp = accuracy * 255;
+        const greenComp = (1 - accuracy) * 255;
+        brushColour = `rgb(${redComp}, ${greenComp}, 0)`;
+    }
+}
 
 function startDrawing(e) {
+    //Reset
+    clearCanvas();
     isDrawing = true;
     const pos = getMousePos(e);
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    startDistance = getDistance(pos.x, pos.y, centerX, centerY);
+    totalRotation = 0;
+
+    //Record the start of the circle
+    startRadius = getDistance(pos.x, pos.y, centerX, centerY);
+    prevAngle = getAngle(pos.x, pos.y, centerX, centerY);
+    
+    //Start drawing path
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
 }
 
-function draw(e) {
-    if (!isDrawing) return;
+function draw(e) { //Function is called every time the mouse moves
+    if (!isDrawing) return; //Only draws if left-click is held
     
     const pos = getMousePos(e);
     
-    ctx.strokeStyle = currentColor;
+    ctx.strokeStyle = brushColour;
     ctx.lineWidth = brushSize;
     ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
-    updateDistance(e);
+    updateScore(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
 }
 
 function stopDrawing() {
     if (isDrawing) {
-        distances = [];
+        dRadii = [];
     }
     isDrawing = false;
     ctx.beginPath();
@@ -103,60 +155,21 @@ function getMousePos(e) {
     };
 }
 
-function handleTouchStart(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const mouseEvent = new MouseEvent('mousedown', {
-        clientX: touch.clientX,
-        clientY: touch.clientY
-    });
-    canvas.dispatchEvent(mouseEvent);
-}
 
-function handleTouchMove(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const mouseEvent = new MouseEvent('mousemove', {
-        clientX: touch.clientX,
-        clientY: touch.clientY
-    });
-    canvas.dispatchEvent(mouseEvent);
-}
 
-function getDistance(x1, y1, x2, y2){
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    return Math.sqrt(dx*dx + dy*dy);
-}
-
-function updateDistance(e) {
-    const pos = getMousePos(e);
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    
-    const distance = getDistance(pos.x, pos.y, centerX, centerY) - startDistance;
-    distances.push(distance);
-    const rms = Math.sqrt((distances.reduce((sum, d) => sum + d*d, 0) / distances.length));
-    accuracy = 100 * (1 - rms / startDistance);
-    output.textContent = accuracy.toFixed(2);
-}
-
-// Brush size control
+//Brush size control
 brushSizeSlider.addEventListener('input', (e) => {
     brushSize = e.target.value;
     sizeValue.textContent = brushSize;
 });
 
-// Clear canvas
-clearButton.addEventListener('click', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawFixedObject(); // Redraw fixed object
-});
+//Clear canvas
+clearButton.addEventListener('click', clearCanvas);
 
-// Optional: Add keyboard shortcut for clearing (press 'C')
+//Optional: Add keyboard shortcut for clearing (press 'C')
 document.addEventListener('keydown', (e) => {
     if (e.key === ' ') {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawFixedObject(); // Redraw fixed object
+        drawFixedObject(); //Redraw fixed object
     }
 });
