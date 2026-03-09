@@ -62,3 +62,16 @@ button:hover {
 input[type="range"] {
     width: 100px;
 }
+
+#data{
+    color: white;
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    font-size: 20px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+    pointer-events: none;
+    z-index: 100;
+    white-space: pre-line;
+}

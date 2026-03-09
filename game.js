@@ -2,6 +2,7 @@
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
 const score = document.getElementById('score');
+const data = document.getElementById('data');
 
 //Drawing state
 let isDrawing = false;
@@ -13,7 +14,8 @@ let feedback = 1;
 let dRadii = [];
 let accuracy;
 let startRadius;
-let prevAngle;
+let lastSampledAngle;
+const angleInterval = 5 * Math.PI / 180; //degrees
 let totalRotation;
 
 //Get UI elements
@@ -80,31 +82,37 @@ function updateScore(e) {
     const pos = getMousePos(e);
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    
-    //Check if its the end of the circle
+    if (totalRotation >= 2 * Math.PI) stopDrawing(); //Check if its the end of the circle
+
+
     const angle = getAngle(pos.x, pos.y, centerX, centerY);
-    let dAngle = angle - prevAngle;
+    let dAngle = lastSampledAngle - angle;
     if (dAngle > Math.PI) dAngle -= 2 * Math.PI;
     if (dAngle < -Math.PI) dAngle += 2 * Math.PI;
-    totalRotation += dAngle;
-    if (Math.abs(totalRotation) > 2 * Math.PI) stopDrawing();
-    prevAngle = angle;
-
-    //Record data
-    const distanceToCenter = getDistance(pos.x, pos.y, centerX, centerY);
-    dRadii.push(distanceToCenter - startRadius);
-
-    //Update feedback
-    if (feedback == 1){ //Percentage Feedback
-        const rms = Math.sqrt((dRadii.reduce((sum, r) => sum + r*r, 0) / dRadii.length));
-        accuracy = 100*(1 - rms / startRadius);
-        score.textContent = accuracy.toFixed(2);
-    } else{ //Colour Feedback
-        const accuracy = Math.abs(dRadii[dRadii.length - 1] / startRadius) * 5;
-        const redComp = accuracy * 255;
-        const greenComp = (1 - accuracy) * 255;
-        brushColour = `rgb(${redComp}, ${greenComp}, 0)`;
+    if (dAngle < 0){
+        stopDrawing();
+        alert("Wrong Way");
     }
+    //Record data every {angleInterval} degrees
+    if (dAngle >= angleInterval){
+        const distanceToCenter = getDistance(pos.x, pos.y, centerX, centerY);
+        dRadii.push(distanceToCenter - startRadius);
+        totalRotation += dAngle;
+        lastSampledAngle = angle;
+        
+        //Update feedback
+        if (feedback == 1){ //Percentage Feedback
+            const rms = Math.sqrt((dRadii.reduce((sum, r) => sum + r*r, 0) / dRadii.length));
+            accuracy = 100*(1 - rms / startRadius);
+            score.textContent = accuracy.toFixed(2);
+        } else{ //Colour Feedback
+            const accuracy = Math.abs(dRadii[dRadii.length - 1] / startRadius) * 5;
+            const redComp = accuracy * 255;
+            const greenComp = (1 - accuracy) * 255;
+            brushColour = `rgb(${redComp}, ${greenComp}, 0)`;
+        }
+    }
+    data.textContent = `angle: ${angle}\nlast: ${lastSampledAngle}\ndAngle: ${dAngle}\ntotal: ${totalRotation}`;
 }
 
 function startDrawing(e) {
@@ -118,7 +126,7 @@ function startDrawing(e) {
 
     //Record the start of the circle
     startRadius = getDistance(pos.x, pos.y, centerX, centerY);
-    prevAngle = getAngle(pos.x, pos.y, centerX, centerY);
+    lastSampledAngle = getAngle(pos.x, pos.y, centerX, centerY);
     
     //Start drawing path
     ctx.beginPath();
