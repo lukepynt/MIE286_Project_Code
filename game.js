@@ -10,6 +10,8 @@ let brushColour = 'white';
 let brushSize = 3;
 let feedback = 1;
 
+let error_factor = 1; //1 for default, i think we want to show larger differences on the percentage feedback
+
 //Data
 let dRadii = [];
 let accuracy;
@@ -28,12 +30,28 @@ function drawFixedObject() {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const radius = 10;
+    const startradius = 3;
+    const drawRadius = 200;
     
     ctx.save(); //Save current drawing state
     
     //Draw circle
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+    ctx.fill();
+    
+    ctx.restore(); //Restore drawing state
+    
+    ctx.save(); //Save current drawing state
+    
+    //Draw starter circle
+    ctx.beginPath();
+    ctx.arc(centerX, centerY-drawRadius, startradius, 0, Math.PI * 2);
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 3;
     ctx.stroke();
@@ -70,6 +88,9 @@ function clearCanvas(){
 function getDistance(x1, y1, x2, y2){
     const dx = x2 - x1;
     const dy = y2 - y1;
+
+    console.log(`${dx} ${dy}`);
+
     return Math.sqrt(dx*dx + dy*dy);
 }
 function getAngle(x1, y1, originX, originY){
@@ -103,7 +124,7 @@ function updateScore(e) {
         //Update feedback
         if (feedback == 1){ //Percentage Feedback
             const rms = Math.sqrt((dRadii.reduce((sum, r) => sum + r*r, 0) / dRadii.length));
-            accuracy = 100*(1 - rms / startRadius);
+            accuracy = 100*(1 - error_factor*rms / startRadius);
             score.textContent = accuracy.toFixed(2);
         } else{ //Colour Feedback
             const accuracy = Math.abs(dRadii[dRadii.length - 1] / startRadius) * 5;
