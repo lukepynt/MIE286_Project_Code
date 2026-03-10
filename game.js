@@ -1,3 +1,9 @@
+// TO DO:
+
+
+
+
+
 //Get canvas, context, and score output
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
