@@ -17,6 +17,8 @@ Data Collection Procedure
 
 Clear website, reopen.
 
+Set feedback type
+
 Copy and paste the bottom 3 sets of data from the console to a data file. 
 
 Include a header with the participants name, your name, the current time, and any notes from the trial (maybe they were not participating properly).
