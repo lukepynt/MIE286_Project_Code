@@ -3,7 +3,7 @@ Information to give to participant
 -----------------------------------
 
 Click and hold to draw a circle starting from the top starter circle. 
-Draw the circle as best you can around the central point. You have a max of 5 seconds, try to balance speed and accuracy. Release the mouse button when you’ve completed your circle. 
+Draw the circle as best you can around the central point. You have a max of 10 seconds and a minimum of 1 second for each circle, try to balance speed and accuracy. Release the mouse button when you’ve completed your circle. 
 
 FEEDBACK TYPE 0: Your accuracy score will be visible at the center of the screen
 FEEDBACK TYPE 1: Your circle accuracy will be reflected by the colour of the line, green for accurate, and red for inaccurate
@@ -16,6 +16,8 @@ Data Collection Procedure
 ----------------------------
 
 Clear website, reopen.
+
+Set feedback type
 
 Copy and paste the bottom 3 sets of data from the console to a data file. 
 
