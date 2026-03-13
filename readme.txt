@@ -2,7 +2,7 @@
 Information to give to participant
 -----------------------------------
 
-Click and hold to draw a circle starting from the top starter circle. 
+Click and hold to draw a circle starting from the top blue starter circle. 
 Draw the circle as best you can around the central point. You have a max of 10 seconds and a minimum of 1 second for each circle, try to balance speed and accuracy. Release the mouse button when you’ve completed your circle. 
 
 FEEDBACK TYPE 1: Your accuracy score will be visible at the center of the screen
