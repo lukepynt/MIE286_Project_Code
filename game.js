@@ -113,13 +113,15 @@ function updateScore(e) {
     //Check end conditions
     if (totalRotation >= 2 * Math.PI) {//if circle is complete
         stopDrawing()
-        if (curTime <= 5){
+        if (curTime <= 1){
             alert("WENT TOO QUICKLY!");
         }
-    } 
-    else if (curTime >= 20) {
+        return;
+    }
+    if (curTime >= 10) {
         stopDrawing();
         alert("RAN OUT OF TIME!");
+        return;
     }
 
     const angle = getAngle(pos.x, pos.y, centerX, centerY);
@@ -166,7 +168,6 @@ function clearCanvas(){
 function startDrawing(e) {
     //Reset
     clearCanvas();
-    console.clear();
     isDrawing = true;
     const pos = getMousePos(e);
     const centerX = canvas.width / 2;
@@ -203,10 +204,10 @@ function draw(e) { //Function is called every time the mouse moves
 function stopDrawing() {
     if (isDrawing) {
         dRadii = [];
+        console.log(Date.now());
     }
     isDrawing = false;
     ctx.beginPath();
-    console.log(Date.now());
 }
 
 function getMousePos(e) {
