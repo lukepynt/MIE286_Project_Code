@@ -2,7 +2,7 @@
     // Timing stuff (start time end time)
 
 
-
+// ---- SET UP ----
 
 //Get canvas, context, and score output
 const canvas = document.getElementById('drawingCanvas');
@@ -18,13 +18,18 @@ let feedback = 1;
 
 let error_factor = 1; //1 for default, i think we want to show larger differences on the percentage feedback
 
-//Data
+//Drawing Data
 let dRadii = [];
 let accuracy;
 let startRadius;
 let lastSampledAngle;
 const angleInterval = 5 * Math.PI / 180; //degrees
 let totalRotation;
+
+//Time Data
+let elapsedTime;
+let startTime;
+let timerInterval;
 
 //Get UI elements
 const clearButton = document.getElementById('clearBtn');
@@ -86,6 +91,8 @@ canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('mouseout', stopDrawing);
 
+// ---- GAME FUNCTIONS ----
+
 function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawFixedObject(); // Redraw fixed object
@@ -109,8 +116,9 @@ function updateScore(e) {
     const pos = getMousePos(e);
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    if (totalRotation >= 2 * Math.PI) stopDrawing(); //Check if its the end of the circle
 
+    //Check end conditions
+    if (totalRotation >= 2 * Math.PI) stopDrawing(); //if circle is complete
 
     const angle = getAngle(pos.x, pos.y, centerX, centerY);
     let dAngle = lastSampledAngle - angle;
@@ -158,6 +166,9 @@ function startDrawing(e) {
     //Start drawing path
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
+
+    //start timer
+    startTimer();
 }
 
 function draw(e) { //Function is called every time the mouse moves
@@ -190,7 +201,25 @@ function getMousePos(e) {
     };
 }
 
+// ---- TIMER ----
+function startTimer(){
+    stopTimer();
+    startTime = Date.now(); //returns ms since jan 1 1970
+    curTime = 0;
+    timerInterval = setInterval(updateTimer, 10); //Calls updateTimer every 10 ms
+}
+function updateTimer(){
+    curTime = (Date.now() - startTime) / 1000; //Gets curTime in seconds
+}
+function stopTimer(){
+    if(timerInterval){
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
 
+
+// ---- OTHER/TEMPORARY FUNCTIONS ----
 
 //Brush size control
 brushSizeSlider.addEventListener('input', (e) => {
