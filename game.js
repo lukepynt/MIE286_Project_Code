@@ -52,7 +52,7 @@ function drawFixedObject() {
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+    ctx.fillStyle = 'rgb(255, 255, 255)';
     ctx.fill();
     
     ctx.restore(); //Restore drawing state
@@ -66,7 +66,7 @@ function drawFixedObject() {
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+    ctx.fillStyle = 'rgb(30, 0, 255)';
     ctx.fill();
     
     ctx.restore(); //Restore drawing state
@@ -154,7 +154,7 @@ function updateScore(e) {
             brushColour = `rgb(${redComp}, ${greenComp}, 0)`;
         }
     }
-    data.textContent = `angle: ${angle}\nlast: ${lastSampledAngle}\ndAngle: ${dAngle}\ntotal: ${totalRotation}`;
+    //data.textContent = `angle: ${angle}\nlast: ${lastSampledAngle}\ndAngle: ${dAngle}\ntotal: ${totalRotation}`;
 }
 
 // ---- DRAWING FUNCTIONS ----
@@ -233,23 +233,3 @@ function stopTimer(){
         timerInterval = null;
     }
 }
-
-
-// ---- OTHER/TEMPORARY FUNCTIONS ----
-
-//Brush size control
-brushSizeSlider.addEventListener('input', (e) => {
-    brushSize = e.target.value;
-    sizeValue.textContent = brushSize;
-});
-
-//Clear canvas
-clearButton.addEventListener('click', clearCanvas);
-
-//Optional: Add keyboard shortcut for clearing (press 'C')
-document.addEventListener('keydown', (e) => {
-    if (e.key === ' ') {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawFixedObject(); //Redraw fixed object
-    }
-});

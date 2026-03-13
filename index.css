@@ -6,34 +6,6 @@ body{
     background-color: #000;
 }
 
-.controls {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    z-index: 1000;
-}
-
-button {
-    padding: 8px 16px;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    background-color: #ff4444;
-    color: white;
-    transition: background-color 0.2s;
-}
-
-button:hover {
-    background-color: #cc0000;
-}
 
 #drawingCanvas {
     display: block;
@@ -51,16 +23,6 @@ button:hover {
     color: rgba(255, 0, 0, 0.5);
     pointer-events: none;
     z-index: 100;
-}
-
-.size-control {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-input[type="range"] {
-    width: 100px;
 }
 
 #data{
