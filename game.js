@@ -127,7 +127,7 @@ function updateScore(e) {
     let dAngle = lastSampledAngle - angle;
     if (dAngle > Math.PI) dAngle -= 2 * Math.PI;
     if (dAngle < -Math.PI) dAngle += 2 * Math.PI;
-    if (dAngle < 0){
+    if (dAngle < -Math.PI/20){
         stopDrawing();
         alert("Wrong Way");
     }
@@ -183,6 +183,7 @@ function startDrawing(e) {
 
     //start timer
     startTimer();
+    console.log("START");
     console.log(Date.now());
 }
 
@@ -203,6 +204,7 @@ function draw(e) { //Function is called every time the mouse moves
 function stopDrawing() {
     if (isDrawing) {
         dRadii = [];
+        console.log("FINISH");
         console.log(Date.now());
     }
     isDrawing = false;
