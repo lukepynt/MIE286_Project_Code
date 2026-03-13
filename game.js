@@ -92,19 +92,12 @@ canvas.addEventListener('mouseout', stopDrawing);
 
 // ---- GAME FUNCTIONS ----
 
-function clearCanvas(){
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawFixedObject(); // Redraw fixed object
-}
-
 function getDistance(x1, y1, x2, y2){
     const dx = x2 - x1;
     const dy = y2 - y1;
-
-    console.log(`${dx} ${dy}`);
-
     return Math.sqrt(dx*dx + dy*dy);
 }
+
 function getAngle(x1, y1, originX, originY){
     const x = x1 - originX;
     const y = y1 - originY;
@@ -117,7 +110,16 @@ function updateScore(e) {
     const centerY = canvas.height / 2;
 
     //Check end conditions
-    if (totalRotation >= 2 * Math.PI) stopDrawing(); //if circle is complete
+    if (totalRotation >= 2 * Math.PI) {//if circle is complete
+        stopDrawing()
+        if (curTime <= 5){
+            alert("WENT TOO QUICKLY!");
+        }
+    } 
+    else if (curTime >= 20) {
+        stopDrawing();
+        alert("RAN OUT OF TIME!");
+    }
 
     const angle = getAngle(pos.x, pos.y, centerX, centerY);
     let dAngle = lastSampledAngle - angle;
@@ -127,12 +129,16 @@ function updateScore(e) {
         stopDrawing();
         alert("Wrong Way");
     }
+
     //Record data every {angleInterval} degrees
     if (dAngle >= angleInterval){
         const distanceToCenter = getDistance(pos.x, pos.y, centerX, centerY);
         dRadii.push(distanceToCenter - startRadius);
         totalRotation += dAngle;
         lastSampledAngle = angle;
+
+        // Record distance
+        console.log(distanceToCenter);
         
         //Update feedback
         if (feedback == 1){ //Percentage Feedback
@@ -149,9 +155,17 @@ function updateScore(e) {
     data.textContent = `angle: ${angle}\nlast: ${lastSampledAngle}\ndAngle: ${dAngle}\ntotal: ${totalRotation}`;
 }
 
+// ---- DRAWING FUNCTIONS ----
+
+function clearCanvas(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawFixedObject(); // Redraw fixed object
+}
+
 function startDrawing(e) {
     //Reset
     clearCanvas();
+    console.clear();
     isDrawing = true;
     const pos = getMousePos(e);
     const centerX = canvas.width / 2;
@@ -168,6 +182,7 @@ function startDrawing(e) {
 
     //start timer
     startTimer();
+    console.log(Date.now());
 }
 
 function draw(e) { //Function is called every time the mouse moves
@@ -190,6 +205,7 @@ function stopDrawing() {
     }
     isDrawing = false;
     ctx.beginPath();
+    console.log(Date.now());
 }
 
 function getMousePos(e) {
