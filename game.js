@@ -13,7 +13,7 @@ const data = document.getElementById('data');
 let isDrawing = false;
 let brushColour = 'white';
 let brushSize = 3;
-let feedback = 1;
+let feedback = 0;
 
 let error_factor = 1; //1 for default, i think we want to show larger differences on the percentage feedback
 
