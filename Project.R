@@ -29,8 +29,44 @@ qqnorm(t0, main = "Normal Q-Q Plot Colour Time",
        xlab = "Theoretical Quantiles", ylab = "Sample Quantiles",
        plot.it = TRUE, datax = FALSE); qqline(t0, col = 2)
 
+mean(acc1)
+var(acc1)
+length(acc1)
+
+mean(acc0)
+var(acc0)
+length(acc0)
+
+mean(t1)
+var(t1)
+
+mean(t0)
+var(t0)
+
+N=20 #just chosen arbitrarily
+samp=rnorm(N)
+myTest=t.test(samp)
+tcrit=qt(0.025, df=(N-1))
+
+dum=seq(-3.5, 3.5, length=10^4)#For the plot
+
+plot(dum, dt(dum, df=(N-1)), type='l', xlab='t', ylab='f(t)')
+abline(v=myTest$statistic, lty=2)
+abline(v=tcrit, col='red', lty=2)
+abline(v=-tcrit, col='red', lty=2)
+
+
+#t tests
+
 t.test(acc1, acc0)
 t.test(t1, t0)
 
+library(gginference)
+library(mcStats)
+ggttest(t.test(acc1, acc0))
+#showT.Test(acc1, acc0) not as good
+ggttest(t.test(t1, t0))
+
 var.test(acc1, acc0)
 var.test(t1, t0)
+

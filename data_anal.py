@@ -80,7 +80,7 @@ for i in final_data:
     print(i)
     if "1" in i:
         sum1 +=1
-    else:
+    elif "0" in i:
         sum0 +=1
     print(final_data[i])
     print()
