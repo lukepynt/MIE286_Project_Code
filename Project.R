@@ -76,8 +76,24 @@ abline(v=0.84541, col='blue')
 text(0,-0.02, "Fcrit", col = "gray60", adj = c(0, -.1))
 text(3.25,-0.02, "Fcrit", col = "gray60", adj = c(0, -.1))
 text(1.05,0, "Test stat FB1 = 0.8454", col = "blue", adj = c(0, -.1), srt = 90)
-text(0.65,0, "Test stat FB0 = 0.8113", col = "blue", adj = c(0, -.1), srt = 90)
+text(0.65,0, "Test stat FB2 = 0.8113", col = "blue", adj = c(0, -.1), srt = 90)
 
 
+# plot accuracy v time
+plot(t1, acc1, xlim = c(0,11), ylim = c(60, 100), xlab="Time Feedback 1", ylab="Accuracy Feedback 1")
+abline(lm(acc1 ~ t1), col = "red")
+print(lm(acc1 ~ t1))
+#arrows(t1, acc1-sqrt(var(acc1)), t1, acc1+sqrt(var(acc1)), length=0.05, angle=90, code=3)
 
+plot(t0, acc0, xlim = c(0,11), ylim = c(55, 105), xlab="Time Feedback 2", ylab="Accuracy Feedback 2")
+abline(lm(acc0 ~ t0), col = "red")
+print(lm(acc0 ~ t0))
+#arrows(t0, acc0-sqrt(var(acc0)), t0, acc0+sqrt(var(acc0)), length=0.05, angle=90, code=3)
+
+t <- c(t1, t0)
+acc <- c(acc1, acc0)
+plot(t, acc, xlim = c(0,11), ylim = c(55, 105), xlab="Time Feedback All", ylab="Accuracy Feedback All")
+abline(lm(acc ~ t), col = "red")
+print(cov(t, acc))
+print(lm(acc ~ t))
 
