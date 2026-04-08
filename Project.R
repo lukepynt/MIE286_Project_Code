@@ -82,12 +82,16 @@ text(0.65,0, "Test stat FB2 = 0.8113", col = "blue", adj = c(0, -.1), srt = 90)
 # plot accuracy v time
 plot(t1, acc1, xlim = c(0,11), ylim = c(60, 100), xlab="Time Feedback 1", ylab="Accuracy Feedback 1")
 abline(lm(acc1 ~ t1), col = "red")
+print(cov(t1, acc1))
 print(lm(acc1 ~ t1))
+print(cor(acc1, t1))
 #arrows(t1, acc1-sqrt(var(acc1)), t1, acc1+sqrt(var(acc1)), length=0.05, angle=90, code=3)
 
 plot(t0, acc0, xlim = c(0,11), ylim = c(55, 105), xlab="Time Feedback 2", ylab="Accuracy Feedback 2")
 abline(lm(acc0 ~ t0), col = "red")
+print(cov(t0, acc0))
 print(lm(acc0 ~ t0))
+print(cor(acc0, t0))
 #arrows(t0, acc0-sqrt(var(acc0)), t0, acc0+sqrt(var(acc0)), length=0.05, angle=90, code=3)
 
 t <- c(t1, t0)
@@ -96,4 +100,31 @@ plot(t, acc, xlim = c(0,11), ylim = c(55, 105), xlab="Time Feedback All", ylab="
 abline(lm(acc ~ t), col = "red")
 print(cov(t, acc))
 print(lm(acc ~ t))
+print(cor(acc, t))
+
+# covariants
+
+boysacc <- boys$V1
+boyst <- boys$V2
+girlsacc <- girls$V1
+girlst <- girls$V2
+
+boxplot(acc1, ylab = "Accuracy Feedback 1")
+boxplot(acc0, ylab = "Accuracy Feedback 2")
+boxplot(acc, ylab = "Accuracy Combined")
+boxplot(boysacc, ylab = "Accuracy Male")
+boxplot(girlsacc, ylab = "Accuracy Female")
+boxplot(t1, ylab = "Time Feedback 1")
+boxplot(t0, ylab = "Time Feedback 2")
+boxplot(t, ylab = "Time Combined")
+boxplot(boyst, ylab = "Time Male")
+boxplot(girlst, ylab = "Time Female")
+
+t.test(boysacc, girlsacc)
+var.test(boysacc, girlsacc)
+ggttest(t.test(boysacc, girlsacc))
+t.test(boyst, girlst)
+var.test(boyst, girlst)
+ggttest(t.test(boyst, girlst))
+
 
